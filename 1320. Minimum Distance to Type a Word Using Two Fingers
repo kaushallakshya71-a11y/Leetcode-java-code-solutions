@@ -1,0 +1,60 @@
+class Solution {
+    public int minimumDistance(String word) {
+        int n = word.length();
+        int INF = 1000000;
+
+        // dp[x] = minimum cost where:
+        // one finger is on the previous character
+        // and the other finger is on x
+        int[] dp = new int[26];
+
+        for (int i = 0; i < 26; i++) {
+            dp[i] = 0;
+        }
+
+        for (int i = 1; i < n; i++) {
+            int prev = word.charAt(i - 1) - 'A';
+            int cur = word.charAt(i) - 'A';
+
+            int[] next = new int[26];
+            for (int j = 0; j < 26; j++) {
+                next[j] = INF;
+            }
+
+            for (int other = 0; other < 26; other++) {
+
+                // Use the same finger that typed prev
+                next[other] = Math.min(
+                    next[other],
+                    dp[other] + distance(prev, cur)
+                );
+
+                // Use the other finger
+                next[prev] = Math.min(
+                    next[prev],
+                    dp[other] + distance(other, cur)
+                );
+            }
+
+            dp = next;
+        }
+
+        int ans = INF;
+
+        for (int x : dp) {
+            ans = Math.min(ans, x);
+        }
+
+        return ans;
+    }
+
+    private int distance(int a, int b) {
+        int r1 = a / 6;
+        int c1 = a % 6;
+
+        int r2 = b / 6;
+        int c2 = b % 6;
+
+        return Math.abs(r1 - r2) + Math.abs(c1 - c2);
+    }
+}
