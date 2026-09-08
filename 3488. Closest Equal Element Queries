@@ -1,0 +1,36 @@
+import java.util.*;
+
+class Solution {
+    public List<Integer> solveQueries(int[] nums, int[] queries) {
+        int n = nums.length;
+        int m = 2 * n;
+
+        int[] dist = new int[n];
+        Arrays.fill(dist, n);
+
+        Map<Integer, Integer> last = new HashMap<>();
+
+        for (int i = 0; i < m; i++) {
+            int idx = i % n;
+            int value = nums[idx];
+
+            if (last.containsKey(value)) {
+                int prev = last.get(value) % n;
+                int d = i - last.get(value);
+
+                dist[idx] = Math.min(dist[idx], d);
+                dist[prev] = Math.min(dist[prev], d);
+            }
+
+            last.put(value, i);
+        }
+
+        List<Integer> ans = new ArrayList<>();
+
+        for (int q : queries) {
+            ans.add(dist[q] == n ? -1 : dist[q]);
+        }
+
+        return ans;
+    }
+}
